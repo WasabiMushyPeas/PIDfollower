@@ -20,8 +20,6 @@ struct PID {
     speed: f32,
     angle: u16,
     distance: f32,
-    is_alive: bool,
-    is_player: bool,
 }
 
 //#[derive(Copy, Clone)]
@@ -52,10 +50,41 @@ fn print_board(player: &Player, pid1: &PID, pid2: &PID, pid3: &PID) {
 }
 
 
-// PID calculations
-fn pid_calculate() {
+// Calculations
+fn distance(pid: &PID, player: &Player) -> f32 {
+    let x = pid.x - player.x;
+    let y = pid.y - player.y;
+    let distance = ((x * x + y * y) as f32).sqrt();
+    distance
 }
 
+fn angle(pid: &PID, player: &Player) -> u16 {
+    let x = pid.x - player.x;
+    let y = pid.y - player.y;
+    let angle = (y as f32).atan2(x as f32).to_degrees();
+    angle as u16
+}
+
+
+fn proportional(pid: &mut PID) -> f32 {
+    let error = pid.distance;
+    let proportional = pid.proportional * error;
+    proportional
+}
+
+fn integral(pid: &mut PID) -> f32 {
+    let error = pid.distance;
+    pid.integral_sum += error;
+    let integral = pid.integral * pid.integral_sum;
+    integral
+}
+
+fn derivative(pid: &mut PID) -> f32 {
+    let error = pid.distance;
+    let derivative = pid.derivative * (error - pid.previous_error);
+    pid.previous_error = error;
+    derivative
+}
 
 
 
@@ -79,8 +108,6 @@ fn main() {
         speed: 0.0,
         angle: 0,
         distance: 0.0,
-        is_alive: true,
-        is_player: false,
     };
 
     // PID 2
@@ -95,8 +122,6 @@ fn main() {
         speed: 0.0,
         angle: 0,
         distance: 0.0,
-        is_alive: true,
-        is_player: false,
     };
 
     // PID 3
@@ -111,8 +136,6 @@ fn main() {
         speed: 0.0,
         angle: 0,
         distance: 0.0,
-        is_alive: true,
-        is_player: false,
     };
 
     // Generate Random PID Locations
@@ -174,9 +197,17 @@ fn main() {
             }
         }
 
+        // Calculate PID Values
+        pid1.distance = distance(&pid1, &player);
+        pid1.angle = angle(&pid1, &player);
 
+        pid2.distance = distance(&pid2, &player);
+        pid2.angle = angle(&pid2, &player);
 
+        pid3.distance = distance(&pid3, &player);
+        pid3.angle = angle(&pid3, &player);
 
+        // PID Buffoonery
 
 
 
