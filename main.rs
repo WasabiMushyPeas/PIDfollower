@@ -8,11 +8,13 @@ const WIDTH: i8 = 40;
 const HEIGHT: i8 = 40;
 
 
-#[derive(Copy, Clone)]
+//#[derive(Copy, Clone)]
 struct PID {
     proportional: f32,
     integral: f32,
     derivative: f32,
+    previous_error: f32,
+    integral_sum: f32,
     x: i8,
     y: i8,
     speed: f32,
@@ -22,13 +24,13 @@ struct PID {
     is_player: bool,
 }
 
-#[derive(Copy, Clone)]
+//#[derive(Copy, Clone)]
 struct Player {
     x: i8,
     y: i8,
 }
 
-fn print_board(player: Player, pid1: PID, pid2: PID, pid3: PID) {
+fn print_board(player: &Player, pid1: &PID, pid2: &PID, pid3: &PID) {
     // Clear the screen
     print!("\x1B[2J\x1B[1;1H");
     for i in 0..WIDTH {
@@ -49,6 +51,14 @@ fn print_board(player: Player, pid1: PID, pid2: PID, pid3: PID) {
     }
 }
 
+
+// PID calculations
+fn pid_calculate() {
+}
+
+
+
+
 fn main() {
 
     // Player
@@ -62,6 +72,8 @@ fn main() {
         proportional: 0.0,
         integral: 0.0,
         derivative: 0.0,
+        previous_error: 0.0,
+        integral_sum: 0.0,
         x: 0,
         y: 0,
         speed: 0.0,
@@ -76,6 +88,8 @@ fn main() {
         proportional: 0.0,
         integral: 0.0,
         derivative: 0.0,
+        previous_error: 0.0,
+        integral_sum: 0.0,
         x: 0,
         y: 0,
         speed: 0.0,
@@ -90,6 +104,8 @@ fn main() {
         proportional: 0.0,
         integral: 0.0,
         derivative: 0.0,
+        previous_error: 0.0,
+        integral_sum: 0.0,
         x: 0,
         y: 0,
         speed: 0.0,
@@ -113,9 +129,22 @@ fn main() {
     // Keyboard Input
     let device_state = DeviceState::new();
 
+    // Tune PID Values
+    pid1.proportional = 0.1;
+    pid1.integral = 0.1;
+    pid1.derivative = 0.1;
+
+    pid2.proportional = 0.1;
+    pid2.integral = 0.1;
+    pid2.derivative = 0.1;
+
+    pid3.proportional = 0.1;
+    pid3.integral = 0.1;
+    pid3.derivative = 0.1;
+
     // Main Loop
     loop {
-        print_board(player, pid1, pid2, pid3);
+        print_board(&player, &pid1, &pid2, &pid3);
 
         // Get Keyboard Input
         let keys: Vec<Keycode> = device_state.get_keys();
