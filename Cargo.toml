@@ -1,0 +1,12 @@
+[package]
+name = "PIDfollower"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+device_query = "0.1.0"
+
+[[bin]]
+name = "PIDfollower"
+path = "main.rs"
